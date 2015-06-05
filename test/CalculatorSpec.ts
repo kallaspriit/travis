@@ -1,3 +1,5 @@
+/// <reference path="../reference/jasmine/jasmine.d.ts" />
+
 describe('Calculator', function() {
 
 	it('should sum given values', function() {

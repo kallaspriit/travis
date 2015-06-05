@@ -4,7 +4,7 @@
   "description": "Testing the Travis CI",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "gulp dev"
   },
   "repository": {
     "type": "git",
@@ -17,6 +17,10 @@
   },
   "homepage": "https://github.com/kallaspriit/travis",
   "devDependencies": {
+    "eslint": "^0.22.1",
+    "eslint-plugin-react": "^2.5.0",
+    "gulp": "^3.9.0",
+    "gulp-typescript": "^2.7.6",
     "jasmine-core": "^2.3.4",
     "karma": "^0.12.35",
     "karma-jasmine": "^0.3.5",
