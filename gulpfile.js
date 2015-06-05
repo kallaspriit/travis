@@ -21,7 +21,7 @@ gulp.task('tsc', function () {
 });
 
 // run tests using Karma
-gulp.task('test', function (done) {
+gulp.task('test', ['tsc'], function (done) {
 	karma.start({
 		configFile: __dirname + '/karma.conf.js',
 		singleRun: true
@@ -34,4 +34,4 @@ gulp.task('dev', ['tsc'], function() {
 	gulp.watch([config.files.src, config.files.test], ['tsc']);
 });
 
-gulp.task('default', ['tsc', 'test']);
+gulp.task('default', ['dev']);
