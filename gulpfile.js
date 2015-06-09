@@ -14,7 +14,8 @@ gulp.task('tsc', function () {
 		.pipe(ts({
 			noImplicitAny: true,
 			target: 'ES6',
-			outDir: 'src'
+			outDir: 'src',
+			module: 'commonjs'
 		}));
 
 	return typescriptResult.js.pipe(gulp.dest('dist'));
@@ -30,8 +31,10 @@ gulp.task('test', ['tsc'], function (done) {
 	});
 });
 
+// watches for file changes and rebuilds as needed
 gulp.task('dev', ['tsc'], function() {
 	gulp.watch([config.files.src, config.files.test], ['tsc']);
 });
 
+// default task when executing just "> gulp"
 gulp.task('default', ['dev']);

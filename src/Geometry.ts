@@ -1,3 +1,5 @@
+//import Shape = require('./Shape');
+
 interface Shape {
     getArea() : number;
 }
