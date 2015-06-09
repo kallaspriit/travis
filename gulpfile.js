@@ -1,5 +1,6 @@
 var gulp = require('gulp'),
 	gutil = require('gulp-util'),
+	glob = require('glob'),
 	typescript = require('typescript'),gu
 	ts = require('gulp-typescript'),
 	merge = require('merge2'),
@@ -36,12 +37,17 @@ gulp.task('tsc', function () {
 
 // webpack compilation
 gulp.task('webpack', ['tsc'], function(done) {
+	var specFiles = glob.sync(path.join(__dirname, 'dist', 'test', '*.js'));
+
     webpack({
-		context: path.join(__dirname, 'dist', 'src'),
-		entry: './app',
+		context: path.join(__dirname, 'dist'),
+		entry: {
+			app: './src/app',
+			test: specFiles
+		},
 		output: {
 			path: path.join(__dirname, 'build'),
-			filename: 'bundle.js'
+			filename: '[name].js'
 		},
 		module: {
 			loaders: [
@@ -70,7 +76,7 @@ gulp.task('webpack', ['tsc'], function(done) {
 });
 
 // run tests using Karma
-gulp.task('test', ['tsc'], function (done) {
+gulp.task('test', ['webpack'], function (done) {
 	karma.start({
 		configFile: __dirname + '/karma.conf.js',
 		singleRun: true

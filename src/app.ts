@@ -1,5 +1,5 @@
 import Square from 'Square';
 
-let square = new Square(10);
+let square = new Square(5);
 
-console.log('square', square.size, square.getArea());
+console.log('square area', square.size, square.getArea());
