@@ -1,8 +1,10 @@
 var gulp = require('gulp'),
 	gutil = require('gulp-util'),
+	fs = require('fs'),
 	glob = require('glob'),
-	typescript = require('typescript'),gu
+	typescript = require('typescript'),
 	ts = require('gulp-typescript'),
+	sourcemaps = require('gulp-sourcemaps'),
 	merge = require('merge2'),
 	karma = require('karma').server,
 	webpack = require('webpack'),
@@ -19,6 +21,7 @@ var gulp = require('gulp'),
 // compile TypeScript
 gulp.task('tsc', function () {
 	var typescriptResult = gulp.src([config.files.src, config.files.test])
+		.pipe(sourcemaps.init())
 		.pipe(ts({
 			typescript: typescript, // using custom latest typescript version
 			noImplicitAny: true,
@@ -26,17 +29,26 @@ gulp.task('tsc', function () {
 			//module: 'commonjs',
 			target: 'ES6',
 			outDir: 'src',
-			declarationFiles: true
+			declarationFiles: true, // TODO is this needed?
+			//sourceMap: true,
+			outDir: 'dist/'
 		}));
 
 	return merge([
     	typescriptResult.dts.pipe(gulp.dest('reference')),
-    	typescriptResult.js.pipe(gulp.dest('dist'))
+    	typescriptResult.js
+			.pipe(sourcemaps.write())
+			.pipe(gulp.dest('dist'))
     ]);
 });
 
 // webpack compilation
 gulp.task('webpack', ['tsc'], function(done) {
+	// make sure the babel cache dir exists as it's unable to create it itself
+	if (!fs.existsSync(webpackCacheDir)){
+		fs.mkdirSync(webpackCacheDir);
+	}
+
 	var specFiles = glob.sync(path.join(__dirname, 'dist', 'test', '*.js'));
 
     webpack({
@@ -61,7 +73,7 @@ gulp.task('webpack', ['tsc'], function(done) {
 		resolve: {
 			root: path.join(__dirname, 'dist', 'src')
 		},
-		devtool: 'eval'
+		devtool: 'source-map'
     }, function(err, stats) {
         if(err) {
 			throw new gutil.PluginError('webpack', err);
