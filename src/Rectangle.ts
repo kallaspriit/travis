@@ -1,12 +1,8 @@
-//import Shape = require('./Shape');
+import Shape from 'Shape';
 
-interface Shape {
-    getArea() : number;
-}
-
-class Rectangle implements Shape {
-    private width : number;
-    private height : number;
+export default class Rectangle implements Shape {
+    protected width : number;
+    protected height : number;
 
     constructor(width: number, height: number) {
         this.width = width;

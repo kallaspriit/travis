@@ -25,6 +25,16 @@
     "karma": "^0.12.35",
     "karma-jasmine": "^0.3.5",
     "karma-phantomjs-launcher": "^0.2.0",
-    "phantomjs": "^1.9.17"
+    "phantomjs": "^1.9.17",
+    "typescript": "^1.5.0-beta"
+  },
+  "dependencies": {
+    "babel-core": "^5.5.6",
+    "babel-loader": "^5.1.4",
+    "gulp-util": "^3.0.5",
+    "merge2": "^0.3.5",
+    "node-libs-browser": "^0.5.2",
+    "webpack": "^1.9.10",
+    "webpack-dev-server": "^1.9.0"
   }
 }

@@ -1,5 +1,7 @@
-module Shape {
-    export interface Shape {
-        getArea() : number;
-    }
+interface Shape {
+
+     getArea(): number;
+
 }
+
+export default Shape;

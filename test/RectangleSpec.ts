@@ -1,5 +1,7 @@
 /// <reference path="../reference/jasmine/jasmine.d.ts" />
-/// <reference path="../src/Geometry.ts" />
+/// <reference path="../src/Rectangle.ts" />
+
+import Rectangle from '../src/Rectangle';
 
 describe('Geometry', function () {
 
