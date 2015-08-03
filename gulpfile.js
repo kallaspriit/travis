@@ -14,9 +14,18 @@ var gulp = require('gulp'),
 		files: {
 			src: 'src/**/*.ts',
 			test: 'test/**/*.ts'
+		},
+		dir: {
+			build: path.join('build'),
+			js: path.join('build', 'js'),
+			test: path.join('build', 'js', 'test'),
+			reference: path.join('build', 'reference'),
+			maps: path.join(__dirname, 'build', 'maps'),
+			cache: path.join('build', 'cache'),
+			dist: path.join('build', 'dist'),
+			resolveRoot:  path.join('build', 'js', 'src')
 		}
-	},
-	webpackCacheDir = path.join(__dirname, 'cache');
+	};
 
 // compile TypeScript
 gulp.task('tsc', function () {
@@ -25,40 +34,43 @@ gulp.task('tsc', function () {
 		.pipe(ts({
 			typescript: typescript, // using custom latest typescript version
 			noImplicitAny: true,
-			//target: 'ES5',
-			//module: 'commonjs',
 			target: 'ES6',
-			outDir: 'src',
-			declarationFiles: true, // TODO is this needed?
-			//sourceMap: true,
-			outDir: 'dist/'
+			declarationFiles: true,
+			outDir: config.dir.js
 		}));
 
 	return merge([
-    	typescriptResult.dts.pipe(gulp.dest('reference')),
+    	typescriptResult.dts.pipe(gulp.dest(config.dir.reference)),
     	typescriptResult.js
-			.pipe(sourcemaps.write())
-			.pipe(gulp.dest('dist'))
+			.pipe(sourcemaps.write(config.dir.maps))
+			.pipe(gulp.dest(config.dir.js))
     ]);
 });
 
 // webpack compilation
 gulp.task('webpack', ['tsc'], function(done) {
 	// make sure the babel cache dir exists as it's unable to create it itself
-	if (!fs.existsSync(webpackCacheDir)){
-		fs.mkdirSync(webpackCacheDir);
+	if (!fs.existsSync(config.dir.build)){
+		fs.mkdirSync(config.dir.build);
 	}
 
-	var specFiles = glob.sync(path.join(__dirname, 'dist', 'test', '*.js'));
+	if (!fs.existsSync(config.dir.cache)){
+		fs.mkdirSync(config.dir.cache);
+	}
+
+	var specFiles = glob.sync(path.join(path.resolve(config.dir.test), '*.js'));
 
     webpack({
-		context: path.join(__dirname, 'dist'),
+		context: path.resolve(config.dir.js),
+		resolve: {
+			root: path.resolve(config.dir.resolveRoot)
+		},
 		entry: {
-			app: './src/app',
+			app: 'app.js',
 			test: specFiles
 		},
 		output: {
-			path: path.join(__dirname, 'build'),
+			path: path.resolve(config.dir.dist),
 			filename: '[name].js'
 		},
 		module: {
@@ -66,12 +78,9 @@ gulp.task('webpack', ['tsc'], function(done) {
 				{
 					test: /\.(js|jsx)$/,
 					exclude: /node_modules/,
-					loader: 'babel-loader?cacheDirectory=' + webpackCacheDir
+					loader: 'babel-loader?cacheDirectory=' + config.dir.cache
 				}
 			]
-		},
-		resolve: {
-			root: path.join(__dirname, 'dist', 'src')
 		},
 		devtool: 'source-map'
     }, function(err, stats) {
@@ -87,8 +96,11 @@ gulp.task('webpack', ['tsc'], function(done) {
     });
 });
 
+// watches for file changes and rebuilds as needed
+gulp.task('build', ['tsc', 'webpack']);
+
 // run tests using Karma
-gulp.task('test', ['webpack'], function (done) {
+gulp.task('test', ['build'], function (done) {
 	var server = new KarmaServer({
 		configFile: __dirname + '/karma.conf.js',
 		singleRun: true
@@ -96,9 +108,6 @@ gulp.task('test', ['webpack'], function (done) {
 
 	server.start();
 });
-
-// watches for file changes and rebuilds as needed
-gulp.task('build', ['tsc', 'webpack']);
 
 // watches for file changes and rebuilds as needed
 gulp.task('dev', ['build'], function() {

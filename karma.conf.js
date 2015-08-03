@@ -13,7 +13,7 @@ module.exports = function (config) {
 
 		// list of files / patterns to load in the browser
 		files: [
-			'build/test.js'
+			'build/dist/test.js'
 		],
 
 		// list of files to exclude
