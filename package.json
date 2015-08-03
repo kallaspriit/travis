@@ -17,26 +17,26 @@
   },
   "homepage": "https://github.com/kallaspriit/travis",
   "devDependencies": {
-    "eslint": "^0.22.1",
-    "eslint-plugin-react": "^2.5.0",
+    "eslint": "^1.0.0",
+    "eslint-plugin-react": "^3.1.0",
     "gulp": "^3.9.0",
-    "gulp-typescript": "^2.7.6",
+    "gulp-typescript": "^2.8.0",
     "jasmine-core": "^2.3.4",
-    "karma": "^0.12.35",
-    "karma-jasmine": "^0.3.5",
+    "karma": "^0.13.3",
+    "karma-jasmine": "^0.3.6",
     "karma-phantomjs-launcher": "^0.2.0",
     "phantomjs": "^1.9.17",
-    "typescript": "^1.5.0-beta"
+    "typescript": "^1.5.3"
   },
   "dependencies": {
-    "babel-core": "^5.5.6",
-    "babel-loader": "^5.1.4",
-    "glob": "^5.0.10",
+    "babel-core": "^5.8.20",
+    "babel-loader": "^5.3.2",
+    "glob": "^5.0.14",
     "gulp-sourcemaps": "^1.5.2",
-    "gulp-util": "^3.0.5",
-    "merge2": "^0.3.5",
+    "gulp-util": "^3.0.6",
+    "merge2": "^0.3.6",
     "node-libs-browser": "^0.5.2",
-    "webpack": "^1.9.10",
-    "webpack-dev-server": "^1.9.0"
+    "webpack": "^1.10.5",
+    "webpack-dev-server": "^1.10.1"
   }
 }

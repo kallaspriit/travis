@@ -6,7 +6,7 @@ var gulp = require('gulp'),
 	ts = require('gulp-typescript'),
 	sourcemaps = require('gulp-sourcemaps'),
 	merge = require('merge2'),
-	karma = require('karma').server,
+	KarmaServer = require('karma').Server,
 	webpack = require('webpack'),
 	path = require('path'),
 	WebpackDevServer = require('webpack-dev-server'),
@@ -89,16 +89,16 @@ gulp.task('webpack', ['tsc'], function(done) {
 
 // run tests using Karma
 gulp.task('test', ['webpack'], function (done) {
-	karma.start({
+	var server = new KarmaServer({
 		configFile: __dirname + '/karma.conf.js',
 		singleRun: true
-	}, function () {
-		done();
-	});
+	}, done);
+
+	server.start();
 });
 
 // watches for file changes and rebuilds as needed
-gulp.task('dev', ['tsc'], function() {
+gulp.task('dev', ['tsc', 'webpack'], function() {
 	gulp.watch([config.files.src, config.files.test], ['webpack']);
 });
 
