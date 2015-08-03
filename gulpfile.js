@@ -98,8 +98,11 @@ gulp.task('test', ['webpack'], function (done) {
 });
 
 // watches for file changes and rebuilds as needed
-gulp.task('dev', ['tsc', 'webpack'], function() {
-	gulp.watch([config.files.src, config.files.test], ['webpack']);
+gulp.task('build', ['tsc', 'webpack']);
+
+// watches for file changes and rebuilds as needed
+gulp.task('dev', ['build'], function() {
+	gulp.watch([config.files.src, config.files.test], ['build']);
 });
 
 // default task when executing just "> gulp"
