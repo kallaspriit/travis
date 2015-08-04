@@ -20,17 +20,19 @@ var gulp = require('gulp'),
 			js: path.join('build', 'js'),
 			test: path.join('build', 'js', 'test'),
 			reference: path.join('build', 'reference'),
-			maps: path.join(__dirname, 'build', 'maps'),
+			maps: path.join('..', 'maps'),
 			cache: path.join('build', 'cache'),
 			dist: path.join('build', 'dist'),
 			resolveRoot:  path.join('build', 'js', 'src')
 		}
 	};
 
-// compile TypeScript
+// compile TypeScript, see https://github.com/ivogabe/gulp-typescript for options
 gulp.task('tsc', function () {
 	var typescriptResult = gulp.src([config.files.src, config.files.test])
-		.pipe(sourcemaps.init())
+		.pipe(sourcemaps.init({
+			// debug: true
+		}))
 		.pipe(ts({
 			typescript: typescript, // using custom latest typescript version
 			noImplicitAny: true,
@@ -42,12 +44,16 @@ gulp.task('tsc', function () {
 	return merge([
     	typescriptResult.dts.pipe(gulp.dest(config.dir.reference)),
     	typescriptResult.js
-			.pipe(sourcemaps.write(config.dir.maps))
+			.pipe(sourcemaps.write(config.dir.maps, {
+				sourceRoot: './',
+				includeContent: true,
+				// debug: true
+			}))
 			.pipe(gulp.dest(config.dir.js))
     ]);
 });
 
-// webpack compilation
+// webpack compilation, see http://webpack.github.io/docs/configuration.html for options
 gulp.task('webpack', ['tsc'], function(done) {
 	// make sure the babel cache dir exists as it's unable to create it itself
 	if (!fs.existsSync(config.dir.build)){
@@ -61,19 +67,32 @@ gulp.task('webpack', ['tsc'], function(done) {
 	var specFiles = glob.sync(path.join(path.resolve(config.dir.test), '*.js'));
 
     webpack({
+		// the base directory (absolute path!) for resolving the entry option
 		context: path.resolve(config.dir.js),
+
+
 		resolve: {
 			root: path.resolve(config.dir.resolveRoot)
 		},
+
+		// entry points for the bundle
 		entry: {
 			app: 'app.js',
 			test: specFiles
 		},
 		output: {
 			path: path.resolve(config.dir.dist),
-			filename: '[name].js'
+			filename: '[name].js',
+			devtoolModuleFilenameTemplate: 'app:///[resource-path]',
+			pathinfo: true
 		},
 		module: {
+			preLoaders: [
+				{
+					test: /\.js$/,
+					loader: 'source-map-loader'
+				}
+			],
 			loaders: [
 				{
 					test: /\.(js|jsx)$/,
@@ -96,8 +115,8 @@ gulp.task('webpack', ['tsc'], function(done) {
     });
 });
 
-// watches for file changes and rebuilds as needed
-gulp.task('build', ['tsc', 'webpack']);
+// rebuilds the project once, does not start watchers or server
+gulp.task('build', ['webpack']);
 
 // run tests using Karma
 gulp.task('test', ['build'], function (done) {
