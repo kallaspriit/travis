@@ -145,4 +145,4 @@ gulp.task('dev', ['build'], function() {
 });
 
 // default task when executing just "> gulp"
-gulp.task('default', ['dev']);
+gulp.task('default', ['build']);
