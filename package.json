@@ -27,7 +27,7 @@
     "karma-phantomjs-launcher": "^0.2.0",
     "phantomjs": "^1.9.17",
     "source-map-loader": "^0.1.5",
-    "typescript": "^1.5.3"
+    "typescript": "^1.6.0-dev.20150804"
   },
   "dependencies": {
     "babel-core": "^5.8.20",
@@ -37,6 +37,7 @@
     "gulp-util": "^3.0.6",
     "merge2": "^0.3.6",
     "node-libs-browser": "^0.5.2",
+    "react": "^0.13.3",
     "webpack": "^1.10.5",
     "webpack-dev-server": "^1.10.1"
   }

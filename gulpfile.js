@@ -13,6 +13,7 @@ var gulp = require('gulp'),
 	config = {
 		files: {
 			src: 'src/**/*.ts',
+			views: 'src/**/*.tsx',
 			test: 'test/**/*.ts'
 		},
 		dir: {
@@ -29,7 +30,7 @@ var gulp = require('gulp'),
 
 // compile TypeScript, see https://github.com/ivogabe/gulp-typescript for options
 gulp.task('tsc', function () {
-	var typescriptResult = gulp.src([config.files.src, config.files.test])
+	var typescriptResult = gulp.src([config.files.src, config.files.views, config.files.test])
 		.pipe(sourcemaps.init({
 			// debug: true
 		}))
@@ -38,9 +39,19 @@ gulp.task('tsc', function () {
 			noImplicitAny: true,
 			target: 'ES6',
 			declarationFiles: true,
-			outDir: config.dir.js
+			outDir: config.dir.js,
+			// jsx: 'preserve'
+			jsx: 'react'
 		}));
 
+	// stop on error
+	typescriptResult.on('error', function(e) {
+		gutil.log('Compiling TypeScript failed, please check your sources');
+
+		process.exit(1);
+	});
+
+	// generate both reference files and JS files with source maps
 	return merge([
     	typescriptResult.dts.pipe(gulp.dest(config.dir.reference)),
     	typescriptResult.js
@@ -89,7 +100,7 @@ gulp.task('webpack', ['tsc'], function(done) {
 		module: {
 			preLoaders: [
 				{
-					test: /\.js$/,
+					test: /\.(js|jsx)$/,
 					loader: 'source-map-loader'
 				}
 			],
@@ -107,9 +118,9 @@ gulp.task('webpack', ['tsc'], function(done) {
 			throw new gutil.PluginError('webpack', err);
 		}
 
-        gutil.log("[webpack]", stats.toString({
+        /*gutil.log("[webpack]", stats.toString({
             // output options
-        }));
+        }));*/
 
         done();
     });
@@ -130,7 +141,7 @@ gulp.task('test', ['build'], function (done) {
 
 // watches for file changes and rebuilds as needed
 gulp.task('dev', ['build'], function() {
-	gulp.watch([config.files.src, config.files.test], ['build']);
+	gulp.watch([config.files.src, config.files.views, config.files.test], ['build']);
 });
 
 // default task when executing just "> gulp"
